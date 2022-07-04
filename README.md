@@ -126,14 +126,6 @@ Ok, now that you have a database created the next step is to create tables to wo
 
 - `networks`, identified by a unique name represent a region, an area wher you find related infrastructure.
 
-- A network will contain several `sensors`. Sensors are uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name.
-
-- Next, for each sensor you want to retrieve `temperatures` sorted by descending date.
-
-> As dictated by the best practices of data modeling with Cassandra, these requirements are satisfied by creating dedicated tables (denormalization),
-> It will be our (that is, the application's) responsibility to maintain them aligned.
-> Of course, we also need a `networks` table - we will start with this one indeed.
-
 #### ✅ Step 5a. Navigate to the CQL Console and login to the database
 
 In the Summary screen for your database, select **_CQL Console_** from the top menu in the main window. This will take you to the CQL Console and automatically log you in.
@@ -216,10 +208,9 @@ something interesting with the data.
 
 #### ✅ Step 5d. Create the tables for `sensors` and `temperatures`**
 
-Let us create two more tables, which will contain the _posts_.
-As remarked earlier, we will store the posts in two tables which
-differ in how they are partitioned: look at the commands below,
-the differences mostly lie in the `PRIMARY KEY` specification:
+- A network will contain several `sensors`. Sensors are uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name. 
+
+- Next, for each sensor you want to retrieve `temperatures` sorted by descending date.
 
 📘 **Command to execute**
 
@@ -233,20 +224,45 @@ CREATE TABLE IF NOT EXISTS sensors_by_network (
   PRIMARY KEY ((network),sensor)
 );
 
-CREATE TABLE IF NOT EXISTS temperatures_by_network (
-  network         TEXT,
-  date_hour       TIMESTAMP,
-  sensor          TEXT,
-  avg_temperature FLOAT,
-  latitude        DECIMAL,
-  longitude       DECIMAL,
-  PRIMARY KEY ((network), date_hour, sensor)
-) WITH CLUSTERING ORDER BY (date_hour DESC, sensor ASC);
-
-
+CREATE TABLE IF NOT EXISTS temperatures_by_sensor_bad (
+  sensor TEXT,
+  timestamp TIMESTAMP,
+  value FLOAT,
+  PRIMARY KEY ((sensor),timestamp)
+) WITH CLUSTERING ORDER BY (timestamp DESC);
 ```
 
-Then **_DESCRIBE_** your keyspace tables: you should see all three listed.
+- `networks` to `sensors` is a one-to-many relationship yet there is no integrity constraint. This is on you, at application level to ensure the coherence. 
+
+- You should notice than sensors are grouped by network (as the name stated. The partition key `network` group all sensors for a same network on the same Cassandra node meaning a request with network in the where clause will access a single node.
+
+- `sensors` to `temperatures` is a also a one-to-many relation. Every temperature  for a sensor will be saved in the same partition.
+
+<p/>
+<details>
+<summary><b>This table has a major issue...can you guess what it is ? </b></summary>
+<hr>
+The SIZE. The more the sensors capture information the bigger the partitions become. There is a good practive rule stating that the upper limit for a parition is 100MB or 100k records. You need to split values across multiple partitions. This technique is called <i>bucketing.</i>
+</details>
+<p/>
+
+📘 **Command to execute**
+
+```sql
+DROP TABLE  temperatures_by_sensor_bad;
+
+CREATE TABLE temperatures_by_sensor (
+  sensor TEXT,
+  date DATE,
+  timestamp TIMESTAMP,
+  value FLOAT,
+  PRIMARY KEY ((sensor, date),timestamp)
+) WITH CLUSTERING ORDER BY (timestamp DESC);
+```
+
+> ℹ️ _Dropping a table can lead to a timeout in the user interface, do not worry it is not harmful the table is effectively deleted under the hood._
+
+**_DESCRIBE_** your keyspace tables: you should see all three listed.
 
 📘 **Command to execute**
 
@@ -258,12 +274,18 @@ DESC TABLES;
 
 ![A table created](images/cql/04_post_tables_created.png)
 
-_You may wonder, how did we arrive at this particular structure for the `sensors_by_network` and `temperatures_by_network` tables? Also why those table names ?
+And tables list:
+
+![A table created](images/cql/04_post_tables_created_2.png)
+
+_You may wonder, how did we arrive at this particular structure for the `sensors_by_network` and `temperatures_by_sensors` tables ?
+
 The answer lies in the methodology for data modeling
-with Cassandra, which, at its very core, states: **first look at the application's needs,
-determine the required workflows, then map them to a number of queries, finally design a table around each query**.
-We create table `sensors_by_network` to support a query such as "get all sensors by a network `X`";
-then we also need table `temperatures_by_network` for a query of type "get all temperature value for a network `Y`, and filter with a sensor `W`"._
+with Cassandra, which, at its very core, states: first looking at application's needs, determine the required workflows, then map them to a number of queries, finally design a table around each query**.
+
+- We create table `sensors_by_network` to support a query such as "get all sensors by a network `X`"_
+
+- We create table `temperatures_by_sensors` to support a query such as "get all temperatures by a sensor `Y`"_
 
 [🏠 Back to Table of Contents](#table-of-contents)
 
@@ -273,7 +295,7 @@ CRUD stands for "**create, read, update, and delete**". Simply put, they are the
 
 #### ✅ Step 6a. (C)RUD = create = insert data, users**
 
-Our tables are in place so let's put some data in them. This is done with the **INSERT** statement. We'll start by inserting three rows into the **_networks_** table.
+Our tables are in place so let's put some data in them. This is done with the **INSERT** statement. We'll start by inserting 2 rows into the **_networks_** table.
 
 Copy and paste the following in your CQL Console:
 _(Once you have carefully examined the first of the following **INSERT** statements below, you can simply copy/paste the others which are very similar.)_
@@ -295,6 +317,7 @@ VALUES ('volcano-net',
 #### ✅ Step 6b. (C)RUD = create = insert data, posts**
 
 Let's run some more **INSERT** statements, this time for **sensors**. We'll insert data into the **_sensors_by_network_** table.
+
 _(Once you have carefully examined the first of the following **INSERT** statements below, you can simply copy/paste the others which are very similar.)_
 
 > _Note_: in the following, we are using `MAP<>` where you can defined you our key/value adding a bit of flexibility where Cassandra Data models are strongly typed.
@@ -326,31 +349,179 @@ VALUES ('volcano-net','s2002',44.463195,-110.830124,
 
 Ok, we have a lovely bunch of sensors in our application.
 
-Now let's add temperatures measures in table **_temperatures_by_network_** as well! Let's do it with the following command (please note that the `INSERT` statements are exactly the same as above, with only the table name changed):
+Now let's add temperatures measures in table **_temperatures_by_sensors_** as well! Let's do it with the following command (please note that the `INSERT` statements are exactly the same as above, with only the table name changed):
 
 > _Note_: In a relational database you may have use a join on 3 tables `Networks > Sensors > Temperatures`. in the following, we are putting back the network name in temperature table and this is because it will be required in the where clause. If the network is not required we could have use 
 
 📘 **Commands to execute**
 
 ```sql
-
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-04','2020-07-04 00:00:01',80);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-04','2020-07-04 00:59:59',79);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-04','2020-07-04 12:00:01',97);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-04','2020-07-04 12:59:59',98);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-04','2020-07-04 00:00:01',82);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-04','2020-07-04 00:59:59',80);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-04','2020-07-04 12:00:01',100);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-04','2020-07-04 12:59:59',100);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-04','2020-07-04 00:00:01',81);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-04','2020-07-04 00:59:59',80);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-04','2020-07-04 12:00:01',99);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-04','2020-07-04 12:59:59',98);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-05','2020-07-05 00:00:01',81);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-05','2020-07-05 00:59:59',80);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-05','2020-07-05 12:00:01',98);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-05','2020-07-05 12:59:59',99);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-05','2020-07-05 00:00:01',82);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-05','2020-07-05 00:59:59',82);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-05','2020-07-05 12:00:01',100);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-05','2020-07-05 12:59:59',99);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-05','2020-07-05 00:00:01',83);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-05','2020-07-05 00:59:59',82);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-05','2020-07-05 12:00:01',101);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-05','2020-07-05 12:59:59',102);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-06','2020-07-06 00:00:01',90);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-06','2020-07-06 00:59:59',90);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-06','2020-07-06 12:00:01',106);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1001','2020-07-06','2020-07-06 12:59:59',107);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-06','2020-07-06 00:00:01',90);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-06','2020-07-06 00:59:59',90);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-06','2020-07-06 12:00:01',108);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-06','2020-07-06 12:59:59',110);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-06','2020-07-06 00:00:01',90);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-06','2020-07-06 00:59:59',90);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-06','2020-07-06 12:00:01',1315);
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1003','2020-07-06','2020-07-06 12:59:59',1429);
 ```
 
 #### ✅ Step 6c. C(R)UD = read = read data**
 
 Now that we've inserted a set of rows (two sets, to be precise), let's take a look at how to read the data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **_**cough_** **_**cough_**:
+
 ```sql
-// Read all rows from "posts_by_user" table (careful with this ...)
-SELECT * FROM posts_by_user;
+SELECT * FROM networks;
+```
+
+```
+ name        | description                   | region
+-------------+-------------------------------+--------
+  forest-net | forest fire detection network |  south
+ volcano-net |    volcano monitoring network |  north
+```
+
+or
+
+```sql
+SELECT * FROM sensors_by_network;
+```
+
+📗 **Expected output**
+
+```
+token@cqlsh:sensor_data> SELECT * FROM sensors_by_network;
+
+ network     | sensor | characteristics                               | latitude  | longitude
+-------------+--------+-----------------------------------------------+-----------+-------------
+  forest-net |  s1001 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.526503 |  -95.582815
+  forest-net |  s1002 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.518650 |  -95.583585
+  forest-net |  s1003 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.515056 |  -95.556225
+ volcano-net |  s2001 | {'accuracy': 'high', 'sensitivity': 'medium'} | 44.460321 | -110.828151
+ volcano-net |  s2002 | {'accuracy': 'high', 'sensitivity': 'medium'} | 44.463195 | -110.830124
 ```
 
 You may have noticed my coughing fit a moment ago. Even though you can execute a **SELECT** statement with no partition key defined, this is NOT something you should do when using Apache Cassandra. We are doing it here for illustration purposes only and because our whole dataset is just a handful of values.
+
 Given the data we inserted earlier, a more proper statement would be something like (while we are at it, we also explicitly specify which columns we want back):
+
 ```sql
-// Read (some columns of) rows in a certain partition of "posts_by_user" table
-SELECT post_id, room_id, text FROM posts_by_user
-  WHERE user_id = 11111111-1111-1111-1111-111111111111;
+SELECT * FROM sensors_by_network
+WHERE network = 'forest-net';
 ```
+
+📗 **Expected output**
+
+```
+token@cqlsh:sensor_data> SELECT * FROM sensors_by_network
+               ... WHERE network = 'forest-net';
+
+ network    | sensor | characteristics                               | latitude  | longitude
+------------+--------+-----------------------------------------------+-----------+------------
+ forest-net |  s1001 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.526503 | -95.582815
+ forest-net |  s1002 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.518650 | -95.583585
+ forest-net |  s1003 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.515056 | -95.556225
+ ```
 
 The key is to ensure we are **always selecting by some partition key** at a minimum, so to avoid the dreaded _full-cluster scans_ which yield performances that are generally unacceptable in production.
 
@@ -359,119 +530,98 @@ Ok, with that out of the way we can **READ** the data from the other table as we
 📘 **Commands to execute**
 
 ```sql
-// Read the whole "posts_by_room" table
-// (warning: not suitable for large tables in production)
-SELECT * FROM posts_by_room;
+select *  from temperatures_by_sensor;
 
-// Read (some columns of) posts from a certain room (= a certain partition)
-SELECT user_id, text FROM posts_by_room WHERE room_id = '#hiking';
+select *  from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
 ```
 
 (again, in the second **SELECT** we specify some columns - it is something we may want to do in most cases).
 
+
 📗 **Expected output**
 
-![SELECT in CQL](images/cql/05_selects.png)
+```
+token@cqlsh:sensor_data> select *  from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
 
-_Notice how the two tables contain the same set of posts, but group them differently:
-table `posts_by_user` is partitioned by user, while table `posts_by_room` is partitioned by room - and the corresponding outputs
-reflect this fact.
-This is very much related to the fact that these two tables, in the data modeling process, were designed
-to answer two different questions, "what are the posts by user X?" and "what are the posts in room Y?" respectively.
-Moreover, within any partition in both tables, right as we required when creating the table,
-posts are kept (and displayed) sorted by decreasing `post_id` (which, due to the nature of `TIMEUUID`s,
-implies a time-ordering as well)._
+ sensor | date       | timestamp                       | value
+--------+------------+---------------------------------+-------
+  s1002 | 2020-07-05 | 2020-07-05 12:59:59.000000+0000 |    99
+  s1002 | 2020-07-05 | 2020-07-05 12:00:01.000000+0000 |   100
+  s1002 | 2020-07-05 | 2020-07-05 00:59:59.000000+0000 |    82
+  s1002 | 2020-07-05 | 2020-07-05 00:00:01.000000+0000 |    82
+```
 
 Once you execute the above **SELECT** statements you should see something like the expected output above. We have now **READ** the data we **INSERTED** earlier. Awesome job!
 
-_BTW, just a little extra for those who are interested. Since we used a [TIMEUUID](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.html) type for our **post_id** field we can use the **dateOf()** function to determine the timestamp from the value. Check it out._
+📘 **Commands to execute**
 
-```sql
-// Read all data from the posts_by_room table, 
-// convert post_id into a timestamp, and label the column "post_date"
-SELECT user_id, dateOf(post_id) AS post_date, text FROM posts_by_room
-  WHERE room_id = '#hiking';
 ```
+select *  from temperatures_by_sensor where sensor='s1002' 
+```
+
+📗 **Expected output**
+
+This is surprise. 
+
+<p/>
+<details>
+<summary><b> Can you explain the error message ?</b></summary>
+As you did not provide the full partition key (2 columns) Cassandra needs to perform a full scan of your cluster (request on every node).
+
+It will be bad, it will be ugly, it will be your fault. Always code your applications as if the DBA was a serial killer and he knows your address.
+</p>
+</details>
+<p/>
 
 #### ✅ Step 6d. CR(U)D = update = update data**
 
 At this point we've **_CREATED_** and **_READ_** some data, but what happens when you want to change some existing data to some new value? That's where **UPDATE** comes into play.
-_The use case is as follows: in our chat app, users are allowed to edit their previous posts._
 
-Let's take one of the records we created earlier and modify it. Recall that we **_INSERTED_** the following record in the **_posts_by_user_** table.
+_The use case is as follows: We notice the sensor was not correctly caliber and the data need to be updated._
+
+Let's take one of the records we created earlier and modify it. Recall that we **_INSERTED_** the following record in the **_temperatures_by_sensors_** table.
+
 ```sql
-      // ** Just for reference: **
-      //  INSERT INTO posts_by_user (user_id, post_id, room_id, text) VALUES (
-      //    11111111-1111-1111-1111-111111111111,
-      //    aaaaaaaa-5cff-11ec-be16-1fedb0dfd057,
-      //    '#hiking', '... and Mt. Gumbo was easy!!!'
-      //  );
+// For reference
+INSERT INTO temperatures_by_sensor 
+(sensor,date,timestamp,value)
+VALUES ('s1002','2020-07-05','2020-07-05 00:00:01', 82);
 ```
 
-Let's also take a look at how the **_posts_by_user_** table was created. In order to **UPDATE** an existing record, indeed, we need to know the primary key we defined when we **CREATE**d the table.
-```sql
-      // ** Just for reference: **
-      // CREATE TABLE IF NOT EXISTS posts_by_user ( 
-      //   user_id     UUID, 
-      //   post_id     TIMEUUID,
-      //   room_id     TEXT, 
-      //   text        TEXT,
-      //   PRIMARY KEY ((user_id), post_id)
-      // ) WITH CLUSTERING ORDER BY (post_id DESC);
-```
+> Let's say that at this particular moment the temperature was not 82 but 92. (Climate change)
 
-> Let's say that user "111..." has noticed the remark by "555..." and, perhaps a bit ashamed by their own boasting, wants to correct their assessment on the hike difficulty!
-
-Looking at ```PRIMARY KEY ((user_id), post_id)```, we know that both **user_id** and **post_id** are used to define uniqueness of the row.
-We'll need both to update our record (plus, of course, some of the data columns, otherwise we are not changing anything in that row!).
-
-_You may remember that we used hardcoded values for **post_id** when we created these records (a real application would generate them live, one way or the other).
-Imagine the UX for editing an existing post: when the user clicks the "edit" button, both **user_id** and **post_id** are known and can be provided to
-the backend, where they ultimately become part of an **UPDATE** statement._
-
-So we can run the following **UPDATE** statement and help user "111..." fix their post on table **_posts_by_user_**
-(we also subsequently read back the data as a check):
+Looking at ```PRIMARY KEY ((sensor, date), timestamp)```, we know that  **sensor**, **date** and **timestamp** are used to define uniqueness of the row. We'll need all of them to update our record (plus, of course, some of the data columns, otherwise we are not changing anything in that row!).
 
 📘 **Commands to execute**
 
 ```sql
-UPDATE posts_by_user 
-  SET text = '... and Mt. Gumbo was NOT SO easy!!!' 
-    WHERE user_id = 11111111-1111-1111-1111-111111111111
-    AND   post_id = aaaaaaaa-5cff-11ec-be16-1fedb0dfd057;
+UPDATE temperatures_by_sensor 
+SET value = 92
+WHERE sensor = 's1002'
+AND   date = '2020-07-05'
+AND timestamp = '2020-07-05 00:00:01';
 
-SELECT post_id, room_id, text FROM posts_by_user
-  WHERE user_id = 11111111-1111-1111-1111-111111111111;
+SELECT *
+FROM temperatures_by_sensor 
+WHERE sensor='s1002' 
+AND DATE='2020-07-05';
 ```
 
 📗 **Expected output**
 
-![Updating in CQL](images/cql/06_updated.png)
-
-But **wait**: data, again, is denormalized! This means that we have to make sure
-such an edit is performed on table **_posts_by_room_** as well.
-Since the primary key of that table is given as `PRIMARY KEY ((room_id), post_id)`,
-these are the fields to provide, along with `text` itself, to the **UPDATE** statement.
-
-And we _could_ run an **UPDATE**. But, lo and behold, in Cassandra **UPDATE**s
-and **INSERT**s are (almost) the same, as a consequence of its architecture and
-the way storage and write logic are structured. We can then update the row with
-an **INSERT** statement like the following (note that we provide: primary key +
-any field that we want to modify; and leave out the other, unchanged fields):
-
-📘 **Commands to execute**
-```sql
-INSERT INTO posts_by_room (room_id, post_id, text) VALUES (
-  '#hiking',
-  aaaaaaaa-5cff-11ec-be16-1fedb0dfd057,
-  '... and Mt. Gumbo was NOT SO easy!!!'
-);
-
-SELECT post_id, user_id, text FROM posts_by_room WHERE room_id = '#hiking';
 ```
+token@cqlsh:sensor_data> select *  from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
 
-That's it, we successfully edited a post (on both tables).
-All that's left now is to **DELETE** some data.
+ sensor | date       | timestamp                       | value
+--------+------------+---------------------------------+-------
+  s1002 | 2020-07-05 | 2020-07-05 12:59:59.000000+0000 |    99
+  s1002 | 2020-07-05 | 2020-07-05 12:00:01.000000+0000 |   100
+  s1002 | 2020-07-05 | 2020-07-05 00:59:59.000000+0000 |    82
+  s1002 | 2020-07-05 | 2020-07-05 00:00:01.000000+0000 |    92
+
+(4 rows)
+token@cqlsh:sensor_data> 
+```
 
 #### ✅ Step 6e. CRU(D) = delete = remove data**
 
@@ -481,32 +631,42 @@ _(meaning I could remove a single column in a single row or I could remove a who
 
 _Generally speaking, it's best to perform as few delete operations as possible on the largest amount of data. Think of it this way, if you want to delete ALL data in a table, don't delete each individual cell, just **TRUNCATE** the table. If you need to delete all the rows in a partition, don't delete each row, **DELETE** the partition, and so on._
 
-> User "555..." notices the post by "111..." being edited and wants to remove their snarky remark. Let's help them!
-
 When deleting a row on a given table, we have to specify the values of the primary key for that table. And don't forget
 that, in our data model, a post appears as two separate rows in the two tables, so we have to perform
 two different **DELETE** operations!
 
 📘 **Commands to execute**
 
+- Partition level delete
+
 ```sql
-SELECT post_id, room_id, text FROM posts_by_user
-  WHERE user_id = 55555555-5555-5555-5555-555555555555;
+// Get a partition
+select *  from temperatures_by_sensor 
+where sensor='s1002' and DATE='2020-07-05';
 
-SELECT post_id, user_id, text FROM posts_by_room WHERE room_id = '#hiking';
+// Delete at Partition level
+DELETE FROM temperatures_by_sensor
+where sensor='s1002' and DATE='2020-07-05';
 
-DELETE FROM posts_by_user
-  WHERE user_id = 55555555-5555-5555-5555-555555555555
-  AND post_id = bbbbbbbb-5cff-11ec-be16-1fedb0dfd057;
+//
+select *  from temperatures_by_sensor 
+where sensor='s1002' and DATE='2020-07-05';
+```
 
-DELETE FROM posts_by_room
-  WHERE room_id = '#hiking'
-  AND post_id = bbbbbbbb-5cff-11ec-be16-1fedb0dfd057;
+- Row-level delete
 
-SELECT post_id, room_id, text FROM posts_by_user
-  WHERE user_id = 55555555-5555-5555-5555-555555555555;
+```sql
+// Get a partition
+select *  from temperatures_by_sensor 
+where sensor='s1002' and DATE='2020-07-04';
 
-SELECT post_id, user_id, text FROM posts_by_room WHERE room_id = '#hiking';
+// Delete at Row level
+DELETE FROM temperatures_by_sensor
+where sensor='s1002' and DATE='2020-07-04' and timestamp='2020-07-04 00:00:01.000000+0000';
+
+// Get a partition
+select *  from temperatures_by_sensor 
+where sensor='s1002' and DATE='2020-07-04';
 ```
 
 (Notice in the above, for your convenience, we read the tables, then delete the rows, then read them again).
@@ -517,13 +677,59 @@ SELECT post_id, user_id, text FROM posts_by_room WHERE room_id = '#hiking';
 
 Notice the rows are now removed from both tables: it is as simple as that.
 
-### Homework note
+#### ✅ Step 6f. Design
 
-To submit the **homework**, please take a screenshot of the CQL Console showing the rows in tables
-`posts_by_user` and `posts_by_room` before _and_ after executing the DELETE statements.
+What if, we need to list temperatures for a whole network ?
+We need all temperature of all sensors how to do you ?
+
+Maybe you select every sensors...
+
+- ...then for every sensors you select the list of temperatures...
+
+- ...but you could do the latest queries in parallel doing map reduce
+
+Maybe you can query all temperatures and then filter by network...
+
+- ... but you will need to add this column network....
+
+- ....
+
+- ....
+
+`STOP IT !!!!`
+
+With Cassandra for a new request, you create a new table, even if its mean duplicating the data. I think you got it ^_^
+
+<p/>
+<details>
+<summary><b> Can you find what the table looks like ?</b></summary>
+<hr>
+<p>
+<pre>
+CREATE TABLE temperatures_by_network (
+  network TEXT,
+  week DATE,
+  date_hour TIMESTAMP,
+  sensor TEXT,
+  avg_temperature FLOAT,
+  latitude DECIMAL,
+  longitude DECIMAL,
+  PRIMARY KEY ((network,week),date_hour,sensor)
+) WITH CLUSTERING ORDER BY (date_hour DESC, sensor ASC);
+</pre>
+</details>
+<p/>
+
+
+```sql
+
+```
+
 
 ## 7. Homeworks
 
+To submit the **homework**, please take a screenshot of the CQL Console showing the rows in tables
+`temperatures_by_sensor` and `sensors_by_network` before _and_ after executing the DELETE statements.
 
 ## 8. What's NEXT ?
 
