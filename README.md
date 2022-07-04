@@ -10,7 +10,7 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 
 > [🔖 Accessing HANDS-ON](#-start-hands-on)
 
-## 📋 Table of content
+## 📋 Table of contents
 
 <img src="https://github.com/datastaxdevs/workshop-cassandra-fundamentals/blob/main/images/cassandra_fundamentals.png?raw=true" align="right" width="300px"/>
 
@@ -20,19 +20,19 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 4. [Create your Database](#4-create-your-astra-db-instance)
 5. [Create tables](#5-create-tables)
 6. [Execute CRUD operations](#6-execute-crud-operations)
-7. [Homeworks](#7-homeworks)
+7. [Homework](#7-homework)
 8. [What's NEXT ](#8-whats-next-)
 <p><br/>
 
 ## 1. Objectives
 
-1️⃣ **Give you an understanding and how and where to positionned Apache Cassandra™**
+1️⃣ **Give you an understanding and how and where to position Apache Cassandra™**
 
 2️⃣ **Give an overview of the NoSQL ecosystem and its rationale**
 
 3️⃣ **Provide an overview of Cassandra Architecture**
 
-4️⃣ **Make you create your first tables and statements**
+4️⃣ **Make you create your first tables and run your first statements**
 
 🚀 **Have fun with an interactive session**
 
@@ -42,24 +42,24 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 <details>
 <summary><b> 1️⃣ Can I run this workshop on my computer?</b></summary>
 <hr>
-<p>There is nothing preventing you from running the workshop on your own machine, If you do so, you will need the following
+<p>There is nothing preventing you from running the workshop on your own machine. If you do so, you will need the following:
 <ol>
 <li><b>git</b> installed on your local system
 <li><b>JDK 8+</b> installed on your local system
 <li><b>Maven 3.6+</b> installed on your local system
 </ol>
 </p>
-In this readme, we try to provide instructions for local development as well - but keep in mind that the main focus is development on Gitpod, hence <strong>We can't guarantee live support</strong> about local development in order to keep on track with the schedule. However, we will do our best to give you the info you need to succeed.
+In this readme, we try to provide instructions for local development as well - but keep in mind that the main focus is development on Gitpod, hence <strong>we can't guarantee live support</strong> about local development in order to keep on track with the schedule. However, we will do our best to give you the info you need to succeed.
 </details>
 <p/>
 <details>
 <summary><b> 2️⃣ What other prerequisites are required?</b></summary>
 <hr>
 <ul>
-<li>You will need an enough *real estate* on screen, we will ask you to open a few windows and it does not file mobiles (tablets should be OK)
-<li>You will need a GitHub account eventually a google account for the Google Authentication (optional)
+<li>You will need enough *real estate* on screen, we will ask you to open a few windows and it would not fit on mobiles (tablets should be OK)
+<li>You will need a GitHub account (possibly a google account for the Google Authentication, optional)
 <li>You will need an Astra account: don't worry, we'll work through that in the following
-<li>As Intermediate level we expect you to know what java and Spring are. 
+<li>As "Intermediate level" we expect you to know what java and Spring are. 
 </ul>
 </p>
 </details>
@@ -73,7 +73,7 @@ In this readme, we try to provide instructions for local development as well - b
 <details>
 <summary><b> 4️⃣ Will I get a certificate if I attend this workshop?</b></summary>
 <hr>
-Attending the session is not enough. You need to complete the homeworks detailed below and you will get a nice badge that you can share on linkedin or anywhere else *(open api badge)*
+Attending the session is not enough. You need to complete the homework detailed below and you will get a nice badge that you can share on linkedin or anywhere else *(open api badge)*
 </details>
 <p/>
 
@@ -95,7 +95,7 @@ we have you covered. In this repository, you'll find everything you need for thi
 
 _**`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all - just push the button and get your cluster. No credit card required, 40M read/write operations and about 80GB storage monthly for free - sufficient to run small production workloads. If you end your credits the databases will shut down, no charge_
 
-Leveraging [Database creation guide](https://github.com/datastaxdevs/awesome-astra/wiki/Create-an-AstraDB-Instance) create a database. *Right-Click the button* with *Open in a new TAB.*
+Leveraging [Database creation guide](https://awesome-astra.github.io/docs/pages/astra/create-instance/#c-procedure) create a database. *Right-Click the button* with *Open in a new TAB.*
 
 <a href="https://astra.dev/2-16"><img src="images/create_astra_db_button.png?raw=true" /></a>
 
@@ -103,7 +103,7 @@ Leveraging [Database creation guide](https://github.com/datastaxdevs/awesome-ast
 |---|---|
 |**Database Name**| `workshops`|
 |**Keyspace Name**| `sensor_data`|
-|**Regions**| Select `GOOGLE CLOUD`, then an Aria close to you, then a region with no LOCKER 🔒 icons, those are the region you can use for free.   |
+|**Regions**| Select `GOOGLE CLOUD`, then an Area close to you, then a region with no LOCKER 🔒 icons, those are the region you can use for free.   |
 
 > **ℹ️ Note:** If you already have a database `workshops`, simply add a keyspace `sensor_data` using the `Add Keyspace` button on the bottom right hand corner of db dashboard page.
 
@@ -123,9 +123,9 @@ The status will change from `Pending` to `Active` when the database is ready, th
 
 Ok, now that you have a database created the next step is to create tables to work with. 
 
-_General Methodology Notes_: We'll work with a (rather simplified) _Internet of things_ application where we recording temperatures coming for sensors.
+_General Methodology Notes_: We'll work with a (rather simplified) _Internet of things_ application where we'll be recording temperatures coming from a network of sensors.
 
-- `networks` identified by a unique name represent a region, an area wher you find related infrastructure.
+- `networks` identified by a unique name represent a region, an area where you find related infrastructure.
 
 #### ✅ Step 5a. Navigate to the CQL Console and login to the database
 
@@ -153,7 +153,7 @@ DESC KEYSPACES;
 ```
 _"desc" is short for "describe", either is valid._
 
-> CQL commands usually end with a semicolon `;`. If you hit Enter, nothing happens and you don't even get your prompt back, most likely it's because you have not closed the command with `;`. If in trouble, you can always get back to the prompt with `Ctrl-C` and start typing the command anew.
+> CQL commands usually end with a semicolon `;`. If you hit Enter and nothing happens -- you don't even get your prompt back -- most likely it's because you have not ended the command with `;`. If in trouble, you can always get back to the prompt with `Ctrl-C` and start typing the command anew.
 
 📗 **Expected output**
 
@@ -172,7 +172,7 @@ USE sensor_data;
 
 ![USE keyspace](images/cql/02_use_sensor_data.png)
 
-Notice how the prompt displays ```<username>@cqlsh:sensor_data>``` informing us we are **using** the **_sensor_data_** keyspace. Now we are ready to create our table.
+Notice how the prompt displays ```<username>@cqlsh:sensor_data>``` informing us we are **using** the **_sensor_data_** keyspace. Now we are ready to create our tables.
 
 #### ✅ Step 5c. Create the `networks` table
 
@@ -209,9 +209,9 @@ something interesting with the data.
 
 #### ✅ Step 5d. Create the tables for `sensors` and `temperatures`
 
-- A network will contain several `sensors`. Sensors are uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name. 
+- A network will contain several `sensors`. Sensors are uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to _retrieve all `sensors` for a given `network`, sorted by the sensor name_. 
 
-- Next, for each sensor you want to retrieve `temperatures` sorted by descending date.
+- Next, for each sensor you want to be able to retrieve `temperatures` sorted by descending date.
 
 📘 **Command to execute**
 
@@ -235,15 +235,15 @@ CREATE TABLE IF NOT EXISTS temperatures_by_sensor_bad (
 
 - `networks` to `sensors` is a one-to-many relationship yet there is no integrity constraint. This is on you, at application level to ensure the coherence. 
 
-- You should notice than sensors are grouped by network (as the name stated. The partition key `network` group all sensors for a same network on the same Cassandra node meaning a request with network in the where clause will access a single node.
+- You should notice than sensors are grouped by network (as the name stated. The partition key `network` groups all sensors for a given network on the same Cassandra node meaning a request with network in the where clause will access a single node.
 
-- `sensors` to `temperatures` is a also a one-to-many relation. Every temperature  for a sensor will be saved in the same partition.
+- `sensors` to `temperatures` is a also a one-to-many relation. Every temperature for a sensor will be saved in the same partition.
 
 <p/>
 <details>
-<summary><b>This table has a major issue...can you guess what it is ? </b></summary>
+<summary><b>This table has a major issue... can you guess what it is?</b></summary>
 <hr>
-The SIZE. The more the sensors capture information the bigger the partitions become. There is a good practive rule stating that the upper limit for a parition is 100MB or 100k records. You need to split values across multiple partitions. This technique is called <i>bucketing.</i>
+The SIZE. The more the sensors capture information the bigger the partitions become. There is a good practice rule stating that the upper limit for a partition is 100MB or 100k records. You need to split values across multiple partitions. This technique is called <i>bucketing.</i>
 </details>
 <p/>
 
@@ -261,7 +261,7 @@ CREATE TABLE temperatures_by_sensor (
 ) WITH CLUSTERING ORDER BY (timestamp DESC);
 ```
 
-> ℹ️ _Dropping a table can lead to a timeout in the user interface, do not worry it is not harmful the table is effectively deleted under the hood._
+> ℹ️ _Dropping a table can lead to a timeout in the user interface, do not worry, it is not harmful: the table is effectively deleted under the hood._
 
 **_DESCRIBE_** your keyspace tables: you should see all three listed.
 
@@ -282,11 +282,11 @@ And tables list:
 You may wonder, how did we arrive at this particular structure for the `sensors_by_network` and `temperatures_by_sensors` tables ?
 
 The answer lies in the methodology for data modeling
-with Cassandra, which, at its very core, states: first looking at application's needs, determine the required workflows, then map them to a number of queries, finally design a table around each query**.
+with Cassandra, which, at its very core, states: **first look at application's needs, determine the required workflows, then map them to a number of queries, finally design a table around each query**.
 
-- We create table `sensors_by_network` to support a query such as "get all sensors by a network `X`"_
+- We create table `sensors_by_network` to support a query such as _"get all sensors for a network `X`"_
 
-- We create table `temperatures_by_sensors` to support a query such as "get all temperatures by a sensor `Y`"_
+- We create table `temperatures_by_sensors` to support a query such as _"get all temperatures for a sensor `Y`"_
 
 [🏠 Back to Table of Contents](#table-of-contents)
 
@@ -321,7 +321,7 @@ Let's run some more **INSERT** statements, this time for **sensors**. We'll inse
 
 _(Once you have carefully examined the first of the following **INSERT** statements below, you can simply copy/paste the others which are very similar.)_
 
-> _Note_: in the following, we are using `MAP<>` where you can defined you our key/value adding a bit of flexibility where Cassandra Data models are strongly typed.
+> _Note_: in the following, we are using `MAP<>` which lets you define you our key/value mapping, thereby adding a bit of flexibility -- Cassandra Data models are strongly typed.
 
 📘 **Commands to execute**
 
@@ -350,7 +350,7 @@ VALUES ('volcano-net','s2002',44.463195,-110.830124,
 
 Ok, we have a lovely bunch of sensors in our application.
 
-Now let's add temperatures measures in table **_temperatures_by_sensors_** as well! Let's do it with the following command (please note that the `INSERT` statements are exactly the same as above, with only the table name changed):
+Now let's add temperature measurements in table **_temperatures_by_sensors_** as well! Let's do it with the following command (please note that the `INSERT` statements are similar to the ones seen above, with different columns and table name):
 
 > _Note_: In a relational database you may have use a join on 3 tables `Networks > Sensors > Temperatures`. in the following, we are putting back the network name in temperature table and this is because it will be required in the where clause. If the network is not required we could have use 
 
@@ -507,21 +507,22 @@ You may have noticed my coughing fit a moment ago. Even though you can execute a
 Given the data we inserted earlier, a more proper statement would be something like (while we are at it, we also explicitly specify which columns we want back):
 
 ```sql
-SELECT * FROM sensors_by_network
+SELECT sensor, characteristics, latitude, longitude FROM sensors_by_network
 WHERE network = 'forest-net';
 ```
 
 📗 **Expected output**
 
 ```
-token@cqlsh:sensor_data> SELECT * FROM sensors_by_network
+token@cqlsh:sensor_data> SELECT sensor, characteristics, latitude, longitude
+               ... FROM sensors_by_network
                ... WHERE network = 'forest-net';
 
- network    | sensor | characteristics                               | latitude  | longitude
-------------+--------+-----------------------------------------------+-----------+------------
- forest-net |  s1001 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.526503 | -95.582815
- forest-net |  s1002 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.518650 | -95.583585
- forest-net |  s1003 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.515056 | -95.556225
+ sensor | characteristics                               | latitude  | longitude
+--------+-----------------------------------------------+-----------+------------
+  s1001 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.526503 | -95.582815
+  s1002 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.518650 | -95.583585
+  s1003 | {'accuracy': 'medium', 'sensitivity': 'high'} | 30.515056 | -95.556225
  ```
 
 The key is to ensure we are **always selecting by some partition key** at a minimum, so to avoid the dreaded _full-cluster scans_ which yield performances that are generally unacceptable in production.
@@ -531,9 +532,9 @@ Ok, with that out of the way we can **READ** the data from the other table as we
 📘 **Commands to execute**
 
 ```sql
-select *  from temperatures_by_sensor;
+select * from temperatures_by_sensor;
 
-select *  from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
+select timestamp, value from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
 ```
 
 (again, in the second **SELECT** we specify some columns - it is something we may want to do in most cases).
@@ -542,14 +543,14 @@ select *  from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05'
 📗 **Expected output**
 
 ```
-token@cqlsh:sensor_data> select *  from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
+token@cqlsh:sensor_data> select timestamp, value from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
 
- sensor | date       | timestamp                       | value
---------+------------+---------------------------------+-------
-  s1002 | 2020-07-05 | 2020-07-05 12:59:59.000000+0000 |    99
-  s1002 | 2020-07-05 | 2020-07-05 12:00:01.000000+0000 |   100
-  s1002 | 2020-07-05 | 2020-07-05 00:59:59.000000+0000 |    82
-  s1002 | 2020-07-05 | 2020-07-05 00:00:01.000000+0000 |    82
+ timestamp                       | value
+---------------------------------+-------
+ 2020-07-05 12:59:59.000000+0000 |    99
+ 2020-07-05 12:00:01.000000+0000 |   100
+ 2020-07-05 00:59:59.000000+0000 |    82
+ 2020-07-05 00:00:01.000000+0000 |    82
 ```
 
 Once you execute the above **SELECT** statements you should see something like the expected output above. We have now **READ** the data we **INSERTED** earlier. Awesome job!
@@ -557,12 +558,12 @@ Once you execute the above **SELECT** statements you should see something like t
 📘 **Commands to execute**
 
 ```
-select *  from temperatures_by_sensor where sensor='s1002' 
+select * from temperatures_by_sensor where sensor='s1002' 
 ```
 
 📗 **Expected output**
 
-This is surprise. 
+This is a surprise. 
 
 <p/>
 <details>
@@ -578,7 +579,7 @@ It will be bad, it will be ugly, it will be your fault. Always code your applica
 
 At this point we've **_CREATED_** and **_READ_** some data, but what happens when you want to change some existing data to some new value? That's where **UPDATE** comes into play.
 
-_The use case is as follows: We notice the sensor was not correctly caliber and the data need to be updated._
+_The use case is as follows: We notice the sensor was not correctly calibrated and the data needs to be updated._
 
 Let's take one of the records we created earlier and modify it. Recall that we **_INSERTED_** the following record in the **_temperatures_by_sensors_** table.
 
@@ -589,7 +590,7 @@ INSERT INTO temperatures_by_sensor
 VALUES ('s1002','2020-07-05','2020-07-05 00:00:01', 82);
 ```
 
-> Let's say that at this particular moment the temperature was not 82 but 92. (Climate change)
+> Let's say that at this particular moment the temperature was not 82 but 92 (Climate change ...).
 
 Looking at ```PRIMARY KEY ((sensor, date), timestamp)```, we know that  **sensor**, **date** and **timestamp** are used to define uniqueness of the row. We'll need all of them to update our record (plus, of course, some of the data columns, otherwise we are not changing anything in that row!).
 
@@ -624,6 +625,10 @@ token@cqlsh:sensor_data> select *  from temperatures_by_sensor where sensor='s10
 token@cqlsh:sensor_data> 
 ```
 
+> *Note*: you could also achieve the same result with another `INSERT` statement,
+> which will simply overwrite the previous values if the partition key is the same.
+> This is because Cassandra _does not read before writing_, i.e. updates are inserts!
+
 #### ✅ Step 6e. CRU(D) = delete = remove data
 
 The final operation from our **CRUD** acronym is **DELETE**. This is the operation we use when we want to remove data from the database.
@@ -632,9 +637,9 @@ _(meaning I could remove a single column in a single row or I could remove a who
 
 _Generally speaking, it's best to perform as few delete operations as possible on the largest amount of data. Think of it this way, if you want to delete ALL data in a table, don't delete each individual cell, just **TRUNCATE** the table. If you need to delete all the rows in a partition, don't delete each row, **DELETE** the partition, and so on._
 
-When deleting a row on a given table, we have to specify the values of the primary key for that table. And don't forget
-that, in our data model, a post appears as two separate rows in the two tables, so we have to perform
-two different **DELETE** operations!
+When deleting a row on a given table, we have to specify the values of the primary key for that table. _(And don't forget
+that, if your data model has the same information stored twice in different tables, it will be up to you to
+issue two different **DELETE** operations!)_
 
 📘 **Commands to execute**
 
@@ -649,7 +654,7 @@ where sensor='s1002' and DATE='2020-07-05';
 DELETE FROM temperatures_by_sensor
 where sensor='s1002' and DATE='2020-07-05';
 
-//
+// Read again
 select *  from temperatures_by_sensor 
 where sensor='s1002' and DATE='2020-07-05';
 ```
@@ -665,7 +670,7 @@ where sensor='s1002' and DATE='2020-07-04';
 DELETE FROM temperatures_by_sensor
 where sensor='s1002' and DATE='2020-07-04' and timestamp='2020-07-04 00:00:01.000000+0000';
 
-// Get a partition
+// Read again
 select *  from temperatures_by_sensor 
 where sensor='s1002' and DATE='2020-07-04';
 ```
@@ -680,8 +685,8 @@ Notice the rows are now removed from both tables: it is as simple as that.
 
 #### ✅ Step 6f. Design
 
-What if, we need to list temperatures for a whole network ?
-We need all temperature of all sensors how to do you ?
+What if we need to list temperatures for a whole network?
+We need all temperature of all sensors: how to do that?
 
 Maybe you select every sensors...
 
@@ -699,7 +704,7 @@ Maybe you can query all temperatures and then filter by network...
 
 `STOP IT !!!!`
 
-With Cassandra for a new request, you create a new table, even if its mean duplicating the data. I think you got it ^_^
+With Cassandra for a new request, you create a new table, even if its mean duplicating the data. I think you got it `^_^`
 
 <p/>
 <details>
@@ -722,15 +727,17 @@ CREATE TABLE temperatures_by_network (
 <p/>
 
 
-```sql
 
-```
-
-
-## 7. Homeworks
+## 7. Homework
 
 To submit the **homework**, please take a screenshot of the CQL Console showing the rows in tables
 `temperatures_by_sensor` and `sensors_by_network` before _and_ after executing the DELETE statements.
+
+You should also complete two mini-courses (a few minutes each) about using CQL and designing tables:
+- Complete the mini-course [Cassandra Query Language](https://killercoda.com/datastaxdevs/course/cassandra-fundamentals/cql) and take a screenshot of the final screen (the one with buttons "Back"/"Restart" ... + console on the right).
+- Complete the mini-course "Cassandra Data Modeling / Digital Library": [lessons](https://www.datastax.com/learn/data-modeling-by-example/digital-library-data-model) and [practice](https://killercoda.com/datastaxdevs/course/cassandra-data-modeling/music-data). Take a screenshot of the final screen of the practice, with the console output at the right.
+
+Don't forget to [submit your homework](https://dtsx.io/homework-intro-to-cassandra) and be awarded a nice verified badge!
 
 ## 8. What's NEXT ?
 
