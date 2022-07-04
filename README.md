@@ -557,8 +557,8 @@ Once you execute the above **SELECT** statements you should see something like t
 
 📘 **Commands to execute**
 
-```
-select * from temperatures_by_sensor where sensor='s1002' 
+```sql
+select * from temperatures_by_sensor where sensor='s1002' ;
 ```
 
 📗 **Expected output**
