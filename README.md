@@ -1,6 +1,6 @@
 # 🎓 Apache Cassandra™ Fundamentals
 
-Welcome to the 'Apache Cassandra™ Fundamentals' workshop! In this two-hour workshop, we shows the most important fundamentals and basics of the powerful distributed NoSQL database Apache Cassandra. 
+Welcome to the **Apache Cassandra™ Fundamentals** workshop! In this two-hour workshop, we shows the most important fundamentals and basics of the powerful distributed `NoSQL database Apache Cassandra™`.
 
 Using **Astra DB**, the cloud based _Cassandra-as-a-Service_ platform delivered by DataStax, we will cover the very first steps for every developer who wants to try to learn a new database: creating tables and CRUD operations. 
 
@@ -113,7 +113,7 @@ save it somewhere safe, as it will be needed to later access the database!
 
 The status will change from `Pending` to `Active` when the database is ready, this will only take 2-3 minutes. You will also receive an email when it is ready.
 
-#### Walkthrough
+📗 **Expected output**
 
 ![astra-db-signup](images/tutorials/astra_signup.gif)
 
@@ -123,9 +123,9 @@ The status will change from `Pending` to `Active` when the database is ready, th
 
 Ok, now that you have a database created the next step is to create tables to work with. 
 
-> _General Methodology Notes_: We'll work with a (rather simplified) _Internet of things_ application where we recording temperatures coming for sensors.
+_General Methodology Notes_: We'll work with a (rather simplified) _Internet of things_ application where we recording temperatures coming for sensors.
 
-- `networks`, identified by a unique name represent a region, an area wher you find related infrastructure.
+- `networks` identified by a unique name represent a region, an area wher you find related infrastructure.
 
 #### ✅ Step 5a. Navigate to the CQL Console and login to the database
 
@@ -141,7 +141,7 @@ In the Summary screen for your database, select **_CQL Console_** from the top m
 > `CREATE KEYSPACE sensor_data WITH REPLICATION = {'class': 'NetworkTopologyStrategy', 'replication_factor': 3};`.
 > See the Cassandra documentation for more details on this.
 
-#### ✅ Step 5b. Describe keyspaces and USE one of them**
+#### ✅ Step 5b. Describe keyspaces and USE one of them
 
 Ok, now we're ready to rock. Creating tables is quite easy, but before we create one we need to tell the database which keyspace we are working with.
 
