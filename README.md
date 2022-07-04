@@ -279,7 +279,7 @@ And tables list:
 
 ![A table created](images/cql/04_post_tables_created_2.png)
 
-_You may wonder, how did we arrive at this particular structure for the `sensors_by_network` and `temperatures_by_sensors` tables ?
+You may wonder, how did we arrive at this particular structure for the `sensors_by_network` and `temperatures_by_sensors` tables ?
 
 The answer lies in the methodology for data modeling
 with Cassandra, which, at its very core, states: first looking at application's needs, determine the required workflows, then map them to a number of queries, finally design a table around each query**.
