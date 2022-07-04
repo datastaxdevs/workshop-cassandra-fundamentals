@@ -1,12 +1,12 @@
-# 🎓🔥 Cassandra Fundamentals 🔥🎓
+# 🎓 Apache Cassandra™ Fundamentals
 
-Welcome to the 'Cassandra Fundamentals' workshop! In this two-hour workshop, we shows the most important fundamentals and basics of the powerful distributed NoSQL database Apache Cassandra. 
+Welcome to the 'Apache Cassandra™ Fundamentals' workshop! In this two-hour workshop, we shows the most important fundamentals and basics of the powerful distributed NoSQL database Apache Cassandra. 
 
-Using **Astra DB**, the cloud based Cassandra-as-a-Service platform delivered by DataStax, we will cover the very first steps for every developer who wants to try to learn a new database: creating tables and CRUD operations. 
+Using **Astra DB**, the cloud based _Cassandra-as-a-Service_ platform delivered by DataStax, we will cover the very first steps for every developer who wants to try to learn a new database: creating tables and CRUD operations. 
 
 It doesn't matter if you join our workshop live or you prefer to do at your own pace, we have you covered. In this repository, you'll find everything you need for this workshop:
 
-> [⚒️ Quick access to HANDS-ON](#-start-hands-on)
+> [🔖 Accessing HANDS-ON](#-start-hands-on)
 
 ## 📋 Table of content
 
@@ -15,24 +15,23 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 1. [Objectives](#1-objectives)
 2. [Frequently asked questions](#2-frequently-asked-questions)
 3. [Materials for the Session](#3-materials-for-the-session)
-4. [Create your Database](#5-create-astra-db-instance)
-6. [Create your Token](#6-create-astra-token)
-7. [Start and setup Gitpod](#7-start-and-setup-gitpod)
-8. [Work with CqlSh](#8-work-with-cqlsh)
-9. [Load Data with DSBulk](#9-load-data-with-dsbulk)
-10. [Use Application as anonymous](#10-use-application-as-anonymous)
-11. [Setup Authentication](#11-setup-authentication)
-12. [Authenticate and use application](#12-authenticate-and-use-application)
-13. [Homeworks](#13-homeworks)
+4. [Create your Database](#4-create-astra-db-instance)
+5. [Create tables](#5-create-tables)
+6. [Execute CRUD operations](#6-execute-crud-operations)
+7. [Homerworks](#7-homerworks)
+8. [What's NEXT ](#8-what-s-next)
 
 ## 1. Objectives
 
-- 1️⃣ Give you an understanding and how and where to positionned Apache Cassandra™
-- 2️⃣ Give an overview of the NoSQL ecosystem and its rationale
-- 3️⃣ Provide an overview of Cassandra Architecture
-- 4️⃣ Make you create your first tables and statements
-- 🚀 Have fun with an interactive session
+1️⃣ Give you an understanding and how and where to positionned Apache Cassandra™
 
+2️⃣ Give an overview of the NoSQL ecosystem and its rationale
+
+3️⃣ Provide an overview of Cassandra Architecture
+
+4️⃣ Make you create your first tables and statements
+
+🚀 Have fun with an interactive session
 
 ## 2. Frequently asked questions
 
@@ -103,8 +102,7 @@ Leveraging [Database creation guide](https://github.com/datastaxdevs/awesome-ast
 |**Keyspace Name**| `sensor_data`|
 |**Regions**| Select `GOOGLE CLOUD`, then an Aria close to you, then a region with no LOCKER 🔒 icons, those are the region you can use for free.   |
 
-#### ℹ️ Notes:
-- If you already have a database `workshops`, simply add a keyspace `sensor_data` using the `Add Keyspace` button on the bottom right hand corner of db dashboard page.
+> **ℹ️ Note:** If you already have a database `workshops`, simply add a keyspace `sensor_data` using the `Add Keyspace` button on the bottom right hand corner of db dashboard page.
 
 While the database is being created, you will also get a **Security token**:
 save it somewhere safe, as it will be needed to later access the database!
@@ -118,21 +116,19 @@ The status will change from `Pending` to `Active` when the database is ready, th
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
-
 ## 5. Create tables
 
 Ok, now that you have a database created the next step is to create tables to work with. 
 
-> _General Methodology Note_: We'll work with a (rather simplified) Internet of things application recording sensor imformation.
-> `networks`, identified by a unique name, write posts in several `sensors`.
-> sensors are also uniquely identified by their name, such as `s1001`. The design of our application is such
-> that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name,
-> and (b) retrieve all `temperaturs` for a given `network`, sorted by descending date and eventually filter for a `sensor`.
+> _General Methodology Notes_: We'll work with a (rather simplified) _Internet of things_ application where we recording temperatures coming for sensors.
+> `networks`, identified by a unique name, are represented by several `sensors`.
+> sensors are also uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name,
+> For each sensor you want to retrieve `temperaturs` for a given `network`, sorted by descending date and eventually filter for a `sensor`.
 > As dictated by the best practices of data modeling with Cassandra, these requirements are satisfied by creating dedicated tables (denormalization),
 > It will be our (that is, the application's) responsibility to maintain them aligned.
 > Of course, we also need a `networks` table - we will start with this one indeed.
 
-**✅ Step 2a. Navigate to the CQL Console and login to the database**
+#### ✅ Step 5a. Navigate to the CQL Console and login to the database
 
 In the Summary screen for your database, select **_CQL Console_** from the top menu in the main window. This will take you to the CQL Console and automatically log you in.
 
@@ -146,7 +142,7 @@ In the Summary screen for your database, select **_CQL Console_** from the top m
 > `CREATE KEYSPACE sensor_data WITH REPLICATION = {'class': 'NetworkTopologyStrategy', 'replication_factor': 3};`.
 > See the Cassandra documentation for more details on this.
 
-**✅ Step 2b. Describe keyspaces and USE one of them**
+#### ✅ Step 5b. Describe keyspaces and USE one of them**
 
 Ok, now we're ready to rock. Creating tables is quite easy, but before we create one we need to tell the database which keyspace we are working with.
 
@@ -179,7 +175,7 @@ USE sensor_data;
 
 Notice how the prompt displays ```<username>@cqlsh:sensor_data>``` informing us we are **using** the **_sensor_data_** keyspace. Now we are ready to create our table.
 
-**✅ Step 2c. Create the `networks` table**
+#### ✅ Step 5c. Create the `networks` table**
 
 At this point we can execute a command to create the **networks** table.
 Just copy/paste the following command into your CQL console at the prompt.
@@ -212,7 +208,7 @@ Aaaand **BOOM**, you created a table in your database. That's it.
 Now let's go ahead and create a couple more tables before we do
 something interesting with the data.
 
-**✅ Step 2d. Create the tables for `sensors` and `temperatures`**
+#### ✅ Step 5d. Create the tables for `sensors` and `temperatures`**
 
 Let us create two more tables, which will contain the _posts_.
 As remarked earlier, we will store the posts in two tables which
@@ -269,7 +265,7 @@ then we also need table `temperatures_by_network` for a query of type "get all t
 
 CRUD stands for "**create, read, update, and delete**". Simply put, they are the basic types of commands you need to work with ANY database in order to maintain data for your applications.
 
-**✅ Step 3a. (C)RUD = create = insert data, users**
+#### ✅ Step 6a. (C)RUD = create = insert data, users**
 
 Our tables are in place so let's put some data in them. This is done with the **INSERT** statement. We'll start by inserting three rows into the **_networks_** table.
 
@@ -290,7 +286,7 @@ VALUES ('volcano-net',
         'north');   
 ```
 
-**✅ Step 3b. (C)RUD = create = insert data, posts**
+#### ✅ Step 6b. (C)RUD = create = insert data, posts**
 
 Let's run some more **INSERT** statements, this time for **sensors**. We'll insert data into the **_sensors_by_network_** table.
 _(Once you have carefully examined the first of the following **INSERT** statements below, you can simply copy/paste the others which are very similar.)_
@@ -334,7 +330,7 @@ Now let's add temperatures measures in table **_temperatures_by_network_** as we
 
 ```
 
-**✅ Step 3c. C(R)UD = read = read data**
+#### ✅ Step 6c. C(R)UD = read = read data**
 
 Now that we've inserted a set of rows (two sets, to be precise), let's take a look at how to read the data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **_**cough_** **_**cough_**:
 ```sql
@@ -391,7 +387,7 @@ SELECT user_id, dateOf(post_id) AS post_date, text FROM posts_by_room
   WHERE room_id = '#hiking';
 ```
 
-**✅ Step 3d. CR(U)D = update = update data**
+#### ✅ Step 6d. CR(U)D = update = update data**
 
 At this point we've **_CREATED_** and **_READ_** some data, but what happens when you want to change some existing data to some new value? That's where **UPDATE** comes into play.
 _The use case is as follows: in our chat app, users are allowed to edit their previous posts._
@@ -471,7 +467,7 @@ SELECT post_id, user_id, text FROM posts_by_room WHERE room_id = '#hiking';
 That's it, we successfully edited a post (on both tables).
 All that's left now is to **DELETE** some data.
 
-**✅ Step 3e. CRU(D) = delete = remove data**
+#### ✅ Step 6e. CRU(D) = delete = remove data**
 
 The final operation from our **CRUD** acronym is **DELETE**. This is the operation we use when we want to remove data from the database.
 In Apache Cassandra you can **DELETE** from the cell level all the way up to the partition
@@ -520,12 +516,14 @@ Notice the rows are now removed from both tables: it is as simple as that.
 To submit the **homework**, please take a screenshot of the CQL Console showing the rows in tables
 `posts_by_user` and `posts_by_room` before _and_ after executing the DELETE statements.
 
-## 4. Wrapping up
+## 7. Homeworks
+
+
+## 8. What's NEXT ?
+
 We've just scratched the surface of what you can do using Astra DB, built on Apache Cassandra.
 Go take a look at [DataStax for Developers](https://www.datastax.com/dev) to see what else is possible.
 There's plenty to dig into!
-
-# Done?
 
 Congratulations: you made to the end of today's workshop.
 
