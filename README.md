@@ -21,6 +21,8 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 7. [Homerworks](#7-homerworks)
 8. [What's NEXT ](#8-what-s-next)
 
+<p><br/>
+
 ## 1. Objectives
 
 1️⃣ Give you an understanding and how and where to positionned Apache Cassandra™
