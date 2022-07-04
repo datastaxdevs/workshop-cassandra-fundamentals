@@ -10,7 +10,7 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 
 ## 📋 Table of content
 
-<img src="https://github.com/datastaxdevs/workshop-cassandra-fundamentals/blob/main/images/cassandra_fundamentals.png?raw=true" align="right" width="400px"/>
+<img src="https://github.com/datastaxdevs/workshop-cassandra-fundamentals/blob/main/images/cassandra_fundamentals.png?raw=true" align="right" width="300px"/>
 
 1. [Objectives](#1-objectives)
 2. [Frequently asked questions](#2-frequently-asked-questions)
@@ -25,15 +25,15 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 
 ## 1. Objectives
 
-1️⃣ Give you an understanding and how and where to positionned Apache Cassandra™
+1️⃣ **Give you an understanding and how and where to positionned Apache Cassandra™**
 
-2️⃣ Give an overview of the NoSQL ecosystem and its rationale
+2️⃣ **Give an overview of the NoSQL ecosystem and its rationale**
 
-3️⃣ Provide an overview of Cassandra Architecture
+3️⃣ **Provide an overview of Cassandra Architecture**
 
-4️⃣ Make you create your first tables and statements
+4️⃣ **Make you create your first tables and statements**
 
-🚀 Have fun with an interactive session
+🚀 **Have fun with an interactive session**
 
 ## 2. Frequently asked questions
 
@@ -123,9 +123,13 @@ The status will change from `Pending` to `Active` when the database is ready, th
 Ok, now that you have a database created the next step is to create tables to work with. 
 
 > _General Methodology Notes_: We'll work with a (rather simplified) _Internet of things_ application where we recording temperatures coming for sensors.
-> `networks`, identified by a unique name, are represented by several `sensors`.
-> sensors are also uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name,
-> For each sensor you want to retrieve `temperaturs` for a given `network`, sorted by descending date and eventually filter for a `sensor`.
+
+- `networks`, identified by a unique name represent a region, an area wher you find related infrastructure.
+
+- A network will contain several `sensors`. Sensors are uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name.
+
+- Next, for each sensor you want to retrieve `temperatures` sorted by descending date.
+
 > As dictated by the best practices of data modeling with Cassandra, these requirements are satisfied by creating dedicated tables (denormalization),
 > It will be our (that is, the application's) responsibility to maintain them aligned.
 > Of course, we also need a `networks` table - we will start with this one indeed.
