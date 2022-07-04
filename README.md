@@ -10,6 +10,9 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 
 ## 📋 Table of content
 
+<img src="https://github.com/datastaxdevs/workshop-cassandra_fundamentals/blob/master/images/cassandra_fundamentals.png?raw=true" align="right" width="400px"/>
+
+
 1. [Objectives](#1-objectives)
 2. [Frequently asked questions](#2-frequently-asked-questions)
 3. [Materials for the Session](#3-materials-for-the-session)
@@ -324,49 +327,12 @@ Ok, we have a lovely bunch of sensors in our application.
 
 Now let's add temperatures measures in table **_temperatures_by_network_** as well! Let's do it with the following command (please note that the `INSERT` statements are exactly the same as above, with only the table name changed):
 
-> _Note_: In a relational database you may have use a join on 3 tables `Networks > Sensors > Temperatures`. in the following, we are putting back the network name in temperature table and this is because it will be required in the where clause.
+> _Note_: In a relational database you may have use a join on 3 tables `Networks > Sensors > Temperatures`. in the following, we are putting back the network name in temperature table and this is because it will be required in the where clause. If the network is not required we could have use 
 
 📘 **Commands to execute**
 
 ```sql
-// Insert some data in the "posts_by_room" table
 
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  11111111-1111-1111-1111-111111111111,
-  22222222-5cff-11ec-be16-1fedb0dfd057,
-  '#hiking', 'I climbed Mt. Gumbo yesterday ...'
-);
-
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  11111111-1111-1111-1111-111111111111,
-  77777777-5cff-11ec-be16-1fedb0dfd057,
-  '#running', 'Who likes marathons here?'
-);
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  11111111-1111-1111-1111-111111111111,
-  aaaaaaaa-5cff-11ec-be16-1fedb0dfd057,
-  '#hiking', '... and Mt. Gumbo was easy!!!'
-);
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  55555555-5555-5555-5555-555555555555,
-  bbbbbbbb-5cff-11ec-be16-1fedb0dfd057,
-  '#hiking', 'For us humans Gumbo is a tough one...!'
-);
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  99999999-9999-9999-9999-999999999999,
-  cccccccc-5cff-11ec-be16-1fedb0dfd057,
-  '#running', 'I just love marathons.'
-);
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  11111111-1111-1111-1111-111111111111,
-  eeeeeeee-5cff-11ec-be16-1fedb0dfd057,
-  '#running', 'Same here!'
-);
-INSERT INTO posts_by_room (user_id, post_id, room_id, text) VALUES (
-  55555555-5555-5555-5555-555555555555,
-  ffffffff-5cff-11ec-be16-1fedb0dfd057,
-  '#hiking', 'I have to buy new boots.'
-);
 ```
 
 **✅ Step 3c. C(R)UD = read = read data**
