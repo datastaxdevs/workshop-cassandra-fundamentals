@@ -174,7 +174,7 @@ USE sensor_data;
 
 Notice how the prompt displays ```<username>@cqlsh:sensor_data>``` informing us we are **using** the **_sensor_data_** keyspace. Now we are ready to create our table.
 
-#### ✅ Step 5c. Create the `networks` table**
+#### ✅ Step 5c. Create the `networks` table
 
 At this point we can execute a command to create the **networks** table.
 Just copy/paste the following command into your CQL console at the prompt.
@@ -207,7 +207,7 @@ Aaaand **BOOM**, you created a table in your database. That's it.
 Now let's go ahead and create a couple more tables before we do
 something interesting with the data.
 
-#### ✅ Step 5d. Create the tables for `sensors` and `temperatures`**
+#### ✅ Step 5d. Create the tables for `sensors` and `temperatures`
 
 - A network will contain several `sensors`. Sensors are uniquely identified by their name, such as `s1001`. The design of our application is such that we need to be able to (a) retrieve all `sensors` by a given `networks`, sorted by the sensor name. 
 
@@ -294,7 +294,7 @@ with Cassandra, which, at its very core, states: first looking at application's 
 
 CRUD stands for "**create, read, update, and delete**". Simply put, they are the basic types of commands you need to work with ANY database in order to maintain data for your applications.
 
-#### ✅ Step 6a. (C)RUD = create = insert data, users**
+#### ✅ Step 6a. (C)RUD = create = insert data, users
 
 Our tables are in place so let's put some data in them. This is done with the **INSERT** statement. We'll start by inserting 2 rows into the **_networks_** table.
 
@@ -315,7 +315,7 @@ VALUES ('volcano-net',
         'north');   
 ```
 
-#### ✅ Step 6b. (C)RUD = create = insert data, posts**
+#### ✅ Step 6b. (C)RUD = create = insert data, posts
 
 Let's run some more **INSERT** statements, this time for **sensors**. We'll insert data into the **_sensors_by_network_** table.
 
@@ -467,7 +467,7 @@ INSERT INTO temperatures_by_sensor
 VALUES ('s1003','2020-07-06','2020-07-06 12:59:59',1429);
 ```
 
-#### ✅ Step 6c. C(R)UD = read = read data**
+#### ✅ Step 6c. C(R)UD = read = read data
 
 Now that we've inserted a set of rows (two sets, to be precise), let's take a look at how to read the data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **_**cough_** **_**cough_**:
 
@@ -574,7 +574,7 @@ It will be bad, it will be ugly, it will be your fault. Always code your applica
 </details>
 <p/>
 
-#### ✅ Step 6d. CR(U)D = update = update data**
+#### ✅ Step 6d. CR(U)D = update = update data
 
 At this point we've **_CREATED_** and **_READ_** some data, but what happens when you want to change some existing data to some new value? That's where **UPDATE** comes into play.
 
@@ -624,7 +624,7 @@ token@cqlsh:sensor_data> select *  from temperatures_by_sensor where sensor='s10
 token@cqlsh:sensor_data> 
 ```
 
-#### ✅ Step 6e. CRU(D) = delete = remove data**
+#### ✅ Step 6e. CRU(D) = delete = remove data
 
 The final operation from our **CRUD** acronym is **DELETE**. This is the operation we use when we want to remove data from the database.
 In Apache Cassandra you can **DELETE** from the cell level all the way up to the partition
