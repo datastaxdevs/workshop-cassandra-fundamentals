@@ -10,8 +10,7 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 
 ## 📋 Table of content
 
-<img src="https://github.com/datastaxdevs/workshop-cassandra_fundamentals/blob/master/images/cassandra_fundamentals.png?raw=true" align="right" width="400px"/>
-
+<img src="https://github.com/datastaxdevs/workshop-cassandra-fundamentals/blob/main/images/cassandra_fundamentals.png?raw=true" align="right" width="400px"/>
 
 1. [Objectives](#1-objectives)
 2. [Frequently asked questions](#2-frequently-asked-questions)
