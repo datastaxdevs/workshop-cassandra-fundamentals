@@ -4,6 +4,8 @@ Welcome to the 'Apache Cassandra™ Fundamentals' workshop! In this two-hour wor
 
 Using **Astra DB**, the cloud based _Cassandra-as-a-Service_ platform delivered by DataStax, we will cover the very first steps for every developer who wants to try to learn a new database: creating tables and CRUD operations. 
 
+![](images/splash.png)
+
 It doesn't matter if you join our workshop live or you prefer to do at your own pace, we have you covered. In this repository, you'll find everything you need for this workshop:
 
 > [🔖 Accessing HANDS-ON](#-start-hands-on)
@@ -15,12 +17,11 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 1. [Objectives](#1-objectives)
 2. [Frequently asked questions](#2-frequently-asked-questions)
 3. [Materials for the Session](#3-materials-for-the-session)
-4. [Create your Database](#4-create-astra-db-instance)
+4. [Create your Database](#4-create-your-astra-db-instance)
 5. [Create tables](#5-create-tables)
 6. [Execute CRUD operations](#6-execute-crud-operations)
-7. [Homerworks](#7-homerworks)
-8. [What's NEXT ](#8-what-s-next)
-
+7. [Homeworks](#7-homeworks)
+8. [What's NEXT ](#8-whats-next-)
 <p><br/>
 
 ## 1. Objectives
