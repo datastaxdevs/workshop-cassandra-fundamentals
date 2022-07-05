@@ -45,8 +45,6 @@ It doesn't matter if you join our workshop live or you prefer to do at your own 
 <p>There is nothing preventing you from running the workshop on your own machine. If you do so, you will need the following:
 <ol>
 <li><b>git</b> installed on your local system
-<li><b>JDK 8+</b> installed on your local system
-<li><b>Maven 3.6+</b> installed on your local system
 </ol>
 </p>
 In this readme, we try to provide instructions for local development as well - but keep in mind that the main focus is development on Gitpod, hence <strong>we can't guarantee live support</strong> about local development in order to keep on track with the schedule. However, we will do our best to give you the info you need to succeed.
@@ -57,7 +55,6 @@ In this readme, we try to provide instructions for local development as well - b
 <hr>
 <ul>
 <li>You will need enough *real estate* on screen, we will ask you to open a few windows and it would not fit on mobiles (tablets should be OK)
-<li>You will need a GitHub account (possibly a google account for the Google Authentication, optional)
 <li>You will need an Astra account: don't worry, we'll work through that in the following
 <li>As "Intermediate level" we expect you to know what java and Spring are. 
 </ul>
@@ -73,7 +70,7 @@ In this readme, we try to provide instructions for local development as well - b
 <details>
 <summary><b> 4️⃣ Will I get a certificate if I attend this workshop?</b></summary>
 <hr>
-Attending the session is not enough. You need to complete the homework detailed below and you will get a nice badge that you can share on linkedin or anywhere else *(open api badge)*
+Attending the session is not enough. You need to complete the homework detailed below and you will get a nice badge that you can share on linkedin or anywhere else *(open badge specification)*
 </details>
 <p/>
 
@@ -93,7 +90,7 @@ we have you covered. In this repository, you'll find everything you need for thi
 
 ## 4. Create your Astra DB instance
 
-_**`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all - just push the button and get your cluster. No credit card required, 40M read/write operations and about 80GB storage monthly for free - sufficient to run small production workloads. If you end your credits the databases will shut down, no charge_
+_**`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all - just push the button and get your cluster. No credit card required, 40M read/write operations and about 80GB storage monthly for free - sufficient to run small production workloads. If you end your credits the databases will pause, no charge_
 
 Leveraging [Database creation guide](https://awesome-astra.github.io/docs/pages/astra/create-instance/#c-procedure) create a database. *Right-Click the button* with *Open in a new TAB.*
 
@@ -108,14 +105,9 @@ Leveraging [Database creation guide](https://awesome-astra.github.io/docs/pages/
 > **ℹ️ Note:** If you already have a database `workshops`, simply add a keyspace `sensor_data` using the `Add Keyspace` button on the bottom right hand corner of db dashboard page.
 
 While the database is being created, you will also get a **Security token**:
-save it somewhere safe, as it will be needed to later access the database!
-(In particular the string starting with `AstraCS:...`.)
+save it somewhere safe, as it will be needed to later in others workshop (In particular the string starting with `AstraCS:...`.)
 
 The status will change from `Pending` to `Active` when the database is ready, this will only take 2-3 minutes. You will also receive an email when it is ready.
-
-📗 **Expected output**
-
-![astra-db-signup](images/tutorials/astra_signup.gif)
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
@@ -352,7 +344,7 @@ Ok, we have a lovely bunch of sensors in our application.
 
 Now let's add temperature measurements in table **_temperatures_by_sensors_** as well! Let's do it with the following command (please note that the `INSERT` statements are similar to the ones seen above, with different columns and table name):
 
-> _Note_: In a relational database you may have use a join on 3 tables `Networks > Sensors > Temperatures`. in the following, we are putting back the network name in temperature table and this is because it will be required in the where clause. If the network is not required we could have use 
+> _Note_: In a relational database you may have use a join on 3 tables `Networks > Sensors > Temperatures`. In the following, we are putting back the network name in temperature table and this is because it will be required in the where clause.
 
 📘 **Commands to execute**
 
@@ -507,7 +499,8 @@ You may have noticed my coughing fit a moment ago. Even though you can execute a
 Given the data we inserted earlier, a more proper statement would be something like (while we are at it, we also explicitly specify which columns we want back):
 
 ```sql
-SELECT sensor, characteristics, latitude, longitude FROM sensors_by_network
+SELECT sensor, characteristics, latitude, longitude 
+FROM sensors_by_network
 WHERE network = 'forest-net';
 ```
 
@@ -532,9 +525,12 @@ Ok, with that out of the way we can **READ** the data from the other table as we
 📘 **Commands to execute**
 
 ```sql
-select * from temperatures_by_sensor;
+SELECT * FROM temperatures_by_sensor;
 
-select timestamp, value from temperatures_by_sensor where sensor='s1002' and DATE='2020-07-05';
+SELECT timestamp, value 
+FROM temperatures_by_sensor
+WHERE sensor='s1002' 
+AND date='2020-07-05';
 ```
 
 (again, in the second **SELECT** we specify some columns - it is something we may want to do in most cases).
@@ -558,7 +554,8 @@ Once you execute the above **SELECT** statements you should see something like t
 📘 **Commands to execute**
 
 ```sql
-select * from temperatures_by_sensor where sensor='s1002' ;
+SELECT * FROM temperatures_by_sensor
+WHERE sensor='s1002';
 ```
 
 📗 **Expected output**
@@ -600,7 +597,7 @@ Looking at ```PRIMARY KEY ((sensor, date), timestamp)```, we know that  **sensor
 UPDATE temperatures_by_sensor 
 SET value = 92
 WHERE sensor = 's1002'
-AND   date = '2020-07-05'
+AND date = '2020-07-05'
 AND timestamp = '2020-07-05 00:00:01';
 
 SELECT *
@@ -647,32 +644,39 @@ issue two different **DELETE** operations!)_
 
 ```sql
 // Get a partition
-select *  from temperatures_by_sensor 
-where sensor='s1002' and DATE='2020-07-05';
+SELECT *  FROM temperatures_by_sensor 
+WHERE sensor='s1002' 
+AND date='2020-07-05';
 
 // Delete at Partition level
 DELETE FROM temperatures_by_sensor
-where sensor='s1002' and DATE='2020-07-05';
+WHERE sensor='s1002' 
+AND date='2020-07-05';
 
 // Read again
-select *  from temperatures_by_sensor 
-where sensor='s1002' and DATE='2020-07-05';
+SELECT *  from temperatures_by_sensor 
+WHERE sensor='s1002' 
+AND date='2020-07-05';
 ```
 
 - Row-level delete
 
 ```sql
 // Get a partition
-select *  from temperatures_by_sensor 
-where sensor='s1002' and DATE='2020-07-04';
+SELECT *  from temperatures_by_sensor 
+WHERE sensor='s1002' 
+AND date='2020-07-04';
 
 // Delete at Row level
 DELETE FROM temperatures_by_sensor
-where sensor='s1002' and DATE='2020-07-04' and timestamp='2020-07-04 00:00:01.000000+0000';
+where sensor='s1002' 
+AND date='2020-07-04' 
+AND timestamp='2020-07-04 00:00:01.000000+0000';
 
 // Read again
-select *  from temperatures_by_sensor 
-where sensor='s1002' and DATE='2020-07-04';
+SELECT *  from temperatures_by_sensor 
+WHERE sensor='s1002' 
+AND date='2020-07-04';
 ```
 
 (Notice in the above, for your convenience, we read the tables, then delete the rows, then read them again).
@@ -685,8 +689,9 @@ Notice the rows are now removed from both tables: it is as simple as that.
 
 #### ✅ Step 6f. Design
 
-What if we need to list temperatures for a whole network?
-We need all temperature of all sensors: how to do that?
+```
+What is we need to find hourly average temperatures for every sensor in a specified network for a given date range? How can you do that?
+```
 
 Maybe you select every sensors...
 
