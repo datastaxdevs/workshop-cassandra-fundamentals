@@ -105,7 +105,7 @@ Leveraging [Database creation guide](https://awesome-astra.github.io/docs/pages/
 > **ℹ️ Note:** If you already have a database `workshops`, simply add a keyspace `sensor_data` using the `Add Keyspace` button on the bottom right hand corner of db dashboard page.
 
 While the database is being created, you will also get a **Security token**:
-save it somewhere safe, as it will be needed to later in others workshop (In particular the string starting with `AstraCS:...`.)
+save it somewhere safe, as it will be needed to later in other workshop (In particular the string starting with `AstraCS:...`.)
 
 > **⚠️ Important**
 > ```
