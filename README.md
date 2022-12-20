@@ -750,7 +750,7 @@ To submit the **homework**, please take a screenshot of the CQL Console showing 
 `temperatures_by_sensor` and `sensors_by_network` before _and_ after executing the DELETE statements.
 
 You should also complete two mini-courses (a few minutes each) about using CQL and designing tables:
-- Complete the mini-course [Cassandra Query Language](https://www.datastax.com/learn/cassandra-fundamentals/cql) (link for hands-on at the bottom of the lessons) and take a screenshot of the final screen ("Congratulations!" on the left + console output on the right).
+- Complete the mini-course [Cassandra Query Language](https://www.datastax.com/learn/cassandra-fundamentals/cql) and take a screenshot of the final screen ("Congratulations!" on the left + console output on the right).
 - Complete the mini-course ["Cassandra Data Modeling / Digital Library"](https://www.datastax.com/learn/data-modeling-by-example/digital-library-data-model) (link for hands-on at the bottom of the lessons). Take a screenshot of the final screen ("Congratulations!" on the left + console output on the right).
 
 Don't forget to [submit your homework](https://dtsx.io/homework-intro-to-cassandra) and be awarded a nice verified badge!
