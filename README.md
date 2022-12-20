@@ -94,7 +94,7 @@ _**`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all
 
 Leveraging [Database creation guide](https://awesome-astra.github.io/docs/pages/astra/create-instance/#c-procedure) create a database. *Right-Click the button* with *Open in a new TAB.*
 
-<a href="https://astra.dev/7-20"><img src="images/create_astra_db_button.png?raw=true" /></a>
+<a href="https://astra.dev/yt-12-21"><img src="images/create_astra_db_button.png?raw=true" /></a>
 
 |Field|Value|
 |---|---|
@@ -109,8 +109,8 @@ save it somewhere safe, as it will be needed to later in other workshop (In part
 
 > **⚠️ Important**
 > ```
-> The instructor will show you on screen how to create a token 
-> but will have to destroy to token immediately for security reasons.
+> The instructor will show the token creation on screen,
+> but will then destroy it immediately for security reasons.
 > ```
 
 The status will change from `Pending` to `Active` when the database is ready, this will only take 2-3 minutes. You will also receive an email when it is ready.
@@ -696,7 +696,12 @@ Notice the rows are now removed from both tables: it is as simple as that.
 #### ✅ Step 6f. Design
 
 ```
-What is we need to find hourly average temperatures for every sensor in a specified network for a given date range? How can you do that?
+What is the table we need in order to:
+  - find hourly average temperatures ...
+  - for every sensor ...
+  - in a specified network ...
+  - for a given date range ?
+How can you do that?
 ```
 
 Maybe you select every sensors...
@@ -745,8 +750,8 @@ To submit the **homework**, please take a screenshot of the CQL Console showing 
 `temperatures_by_sensor` and `sensors_by_network` before _and_ after executing the DELETE statements.
 
 You should also complete two mini-courses (a few minutes each) about using CQL and designing tables:
-- Complete the mini-course [Cassandra Query Language](https://killercoda.com/datastaxdevs/course/cassandra-fundamentals/cql) and take a screenshot of the final screen (the one with buttons "Back"/"Restart" ... + console on the right).
-- Complete the mini-course "Cassandra Data Modeling / Digital Library": [lessons](https://www.datastax.com/learn/data-modeling-by-example/digital-library-data-model) and [practice](https://killercoda.com/datastaxdevs/course/cassandra-data-modeling/music-data). Take a screenshot of the final screen of the practice, with the console output at the right.
+- Complete the mini-course [Cassandra Query Language](https://www.datastax.com/learn/cassandra-fundamentals/cql) (link for hands-on at the bottom of the lessons) and take a screenshot of the final screen ("Congratulations!" on the left + console output on the right).
+- Complete the mini-course ["Cassandra Data Modeling / Digital Library"](https://www.datastax.com/learn/data-modeling-by-example/digital-library-data-model) (link for hands-on at the bottom of the lessons). Take a screenshot of the final screen ("Congratulations!" on the left + console output on the right).
 
 Don't forget to [submit your homework](https://dtsx.io/homework-intro-to-cassandra) and be awarded a nice verified badge!
 
