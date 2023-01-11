@@ -1,0 +1,13 @@
+{
+  "name": "Apache Cassandra Fundamentals",
+  "description": "Welcome to the Apache Cassandra™ Fundamentals workshop! In this two-hour workshop, we shows the most important fundamentals and basics of the powerful distributed NoSQL database Apache Cassandra™.",
+  "duration": "50 minutes",
+  "skillLevel": "Beginning",
+  "githubUrl": "https://github.com/datastaxdevs/workshop-cassandra-fundamentals/",
+  "youtubeUrl": "https://www.youtube.com/watch?v=hTObPaZNBI8",
+  "tags": [
+    { "name": "workshop" }
+  ],
+  "category": "workshop",
+  "priority": 2,
+  "heroImage": "https://api.badgr.io/public/badges/RW0Am093TlaDJBDitqOzjQ/image?imageVersion=1"
